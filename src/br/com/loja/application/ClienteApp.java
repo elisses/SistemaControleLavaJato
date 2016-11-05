@@ -1,5 +1,6 @@
 package br.com.loja.application;
 
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -11,22 +12,29 @@ import br.com.loja.DAO.ClienteDao;
 import br.com.loja.DAO.MysqlDAO;
 import br.com.loja.modelo.Cliente;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
 public class ClienteApp extends Application {
+	private Label id;
 	private Label nome;
 	private Label telefone;
 	private Label cpf;
 	private Label endereco;
 	private Label dataNascimento;
-	private AnchorPane pane;
+	private Label boxModCarro;
+	private ComboBox<String> boxCarro;
+	private AnchorPane pane;	
+	private TextField txId;
 	private TextField txNome;
 	private TextField txTelefone;
 	private TextField txCpf;
@@ -34,97 +42,14 @@ public class ClienteApp extends Application {
 	private TextField txDataNascimento;
 	private GregorianCalendar data=new GregorianCalendar();	
 	private Button btSalvar;
+	private Button btAtualiza;
 	private Button btCancelar;
 	private static Stage stage;	
 	
-	public AnchorPane getPane() {
-		return pane;
-	}
-
-	public void setPane(AnchorPane pane) {
-		this.pane = pane;
-	}
-
-	public TextField getTxNome() {
-		return txNome;
-	}
-
-	public void setTxNome(TextField txNome) {
-		this.txNome = txNome;
-	}
-
-	public TextField getTxTelefone() {
-		return txTelefone;
-	}
-
-	public void setTxTelefone(TextField txTelefone) {
-		this.txTelefone = txTelefone;
-	}
-
-	public TextField getTxCpf() {
-		return txCpf;
-	}
-
-	public void setTxCpf(TextField txCpf) {
-		this.txCpf = txCpf;
-	}
-
-	public TextField getTxEndereco() {
-		return txEndereco;
-	}
-
-	public void setTxEndereco(TextField txEndereco) {
-		this.txEndereco = txEndereco;
-	}
-	
-	public TextField getTxDataNascimento() {
-		return txDataNascimento;
-	}
-
-	public void setTxDataNascimento(TextField txDataNascimento) {
-		this.txDataNascimento = txDataNascimento;
-	}
-
-	public void setBtSalvar(Button btSalvar) {
-		this.btSalvar = btSalvar;
-	}
-
-	public GregorianCalendar getData() {
-		return data;
-	}
-
-	public void setData(GregorianCalendar data) {
-		this.data = data;
-	}
-
-	public Button getBtSalvar() {
-		return btSalvar;
-	}
-
-	public void setBtEntrar(Button btSalvar) {
-		this.btSalvar = btSalvar;
-	}
-
-	public Button getBtCancelar() {
-		return btCancelar;
-	}
-
-	public void setBtCancelar(Button btCancelar) {
-		this.btCancelar = btCancelar;
-	}
-
-	public static Stage getStage() {
-		return stage;
-	}	
-
-	public static void setStage(Stage stage) {
-		ClienteApp.stage = stage;
-	}
-
 	@Override
-	public void start(Stage stage) throws Exception {
+	public void start(Stage stage) throws Exception {			
 		initComponents();
-		initListerners();		
+		initListerners();
 		Scene scene = new Scene(pane);
 		stage.setScene(scene);			
 		stage.setTitle("Cadastro de Cliente");
@@ -137,7 +62,11 @@ public class ClienteApp extends Application {
 	private void initComponents(){
 		
 		pane = new AnchorPane();
-		pane.setPrefSize(350, 250);	
+		pane.setPrefSize(500, 300);	
+		
+		id = new Label("Id:");
+		txId = new TextField();
+		txId.setDisable(true);
 		
 		nome = new Label("Nome:");
 		txNome = new TextField();		
@@ -159,13 +88,30 @@ public class ClienteApp extends Application {
 		txDataNascimento= new TextField();
 		txDataNascimento.setPromptText("dd/MM/yyyy");
 		
+		boxModCarro = new Label("Modelo de Carro:");		
+	    boxCarro = new ComboBox<String>();
+	    boxCarro.setEditable(true);
+		boxCarro.setPrefHeight(30);
+		boxCarro.setPrefWidth(150);
+		 ObservableList<String> options = 
+	                FXCollections.observableArrayList("Codigo","Nome","Cidade");
+		 
+		boxCarro.setItems(options);
+		
 		btSalvar = new Button("Salvar");
 		btCancelar = new Button("Cancelar");
+		btAtualiza = new Button("Atualizar");
 		
-		pane.getChildren().addAll(nome,txNome,telefone,txTelefone,cpf,txCpf,endereco,txEndereco,dataNascimento,txDataNascimento,btSalvar,btCancelar);	
+		
+		pane.getChildren().addAll(nome,txNome,telefone,txTelefone,cpf,txCpf,endereco,
+				txEndereco,dataNascimento,txDataNascimento,btSalvar,btAtualiza,btCancelar,boxCarro,boxModCarro,id,txId);	
 	}
 	
-	private void initLayout(){	
+	public  void initLayout(){	
+		nome.setLayoutX(5);
+		nome.setLayoutY(10);
+		txNome.setLayoutX(5);
+		txNome.setLayoutY(15);
 		nome.setLayoutX(10);
 		nome.setLayoutY(20);
 		txNome.setLayoutX(10);
@@ -186,14 +132,21 @@ public class ClienteApp extends Application {
 		dataNascimento.setLayoutY(140);
 		txDataNascimento.setLayoutX(10);
 		txDataNascimento.setLayoutY(160);
+		boxModCarro.setLayoutX(200);
+		boxModCarro.setLayoutY(140);
+		boxCarro.setLayoutX(200);
+		boxCarro.setLayoutY(160);
 		btSalvar.setLayoutX(10);
 		btSalvar.setLayoutY(210);
-		btCancelar.setLayoutX(80);
+		btAtualiza.setLayoutX(80);
+		btAtualiza.setLayoutY(210);
+		btCancelar.setLayoutX(160);
 		btCancelar.setLayoutY(210);	
-	}
-	
+	}	
 	//Ações dos componentes
-	private void initListerners(){
+	
+		
+	public void initListerners(){
 		btCancelar.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
@@ -206,14 +159,26 @@ public class ClienteApp extends Application {
 			public void handle(ActionEvent event) {
 				adiciona();				
 			}			
-		});		
+		});	
+		
+		btAtualiza.setOnAction(new EventHandler<ActionEvent>(){
+
+			@Override
+			public void handle(ActionEvent event) {
+				atualiza();
+				
+			}
+			
+		});
+			
+		
 	}
-	
+
 	private void fecharAplicacao(){
 		System.exit(0);
 	}
-	
-	private void adiciona(){		
+		
+	private void adiciona(){
 		Cliente cliente = new Cliente();		
 		cliente.setNome(txNome.getText());
 		cliente.setTelefone(txTelefone.getText());
@@ -228,29 +193,80 @@ public class ClienteApp extends Application {
 			e.printStackTrace();
 		}
 		cliente.setDataNascimento(cal);	
-		
-		//validação
-		if((txNome.getText().length() > 0 ) || (txEndereco.getText().length() > 0 )){
-			JOptionPane.showMessageDialog(null, "Adicionado Com Sucesso");
-		}else{
-			JOptionPane.showMessageDialog(null, "Preencha o campo");	
-			return;
-		}	
-		
-		if((txTelefone.getText().length() > 0 ) || (txEndereco.getText().length() > 0 )){
-			JOptionPane.showMessageDialog(null, "Adicionado Com Sucesso");
-		}else{
-			JOptionPane.showMessageDialog(null, "Preencha o campo");	
-			return;
-		}	
+		try{
+			//validação
+			if((txNome.getText().length() > 0 ) || (txEndereco.getText().length() > 0 )){
+				JOptionPane.showMessageDialog(null, "Adicionado Com Sucesso");
+			}else if((txTelefone.getText().length() > 0 ) || (txEndereco.getText().length() > 0 )){
+				JOptionPane.showMessageDialog(null, "Adicionado Com Sucesso");
+			}else{
+				JOptionPane.showMessageDialog(null, "Preencha o campo");	
+				return;
+			}	
+		}catch (Exception e) {
+			e.printStackTrace();
+			
+		}
 		
 		//gravando a conexão
 		MysqlDAO<Cliente> dao = new ClienteDao();				
-		dao.insert(cliente);			
-	}
+		Long codigo = null;
 		
+		try {
+			codigo = dao.insert(cliente);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		cliente.setId(codigo);
+		txId.setText(codigo.toString());
+	}
+	
+	private void atualiza(){
+		Cliente cliente = new Cliente();		
+		cliente.setTelefone(txTelefone.getText());
+		cliente.setCpf(txCpf.getText());
+		cliente.setEndereco(txEndereco.getText());
+		cliente.setId(Long.valueOf(txId.getText()));
+		cliente.setNome(txNome.getText());
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Calendar cal = Calendar.getInstance();
+		try {
+			cal.setTime(sdf.parse(txDataNascimento.getText()));
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		cliente.setDataNascimento(cal);	
+		try{
+			//validação
+			if((txNome.getText().length() > 0 ) || (txEndereco.getText().length() > 0 )){
+				JOptionPane.showMessageDialog(null, "Atualizado com sucesso");
+			}else if((txTelefone.getText().length() > 0 ) || (txEndereco.getText().length() > 0 )){
+				JOptionPane.showMessageDialog(null, "Atualizado com sucesso");
+			}else{
+				JOptionPane.showMessageDialog(null, "Preencha o campo");	
+				return;
+			}	
+		}catch (Exception e) {
+			e.printStackTrace();
+			
+		}
+	
+		//gravando a conexão
+		MysqlDAO<Cliente> dao = new ClienteDao();				
+		try {
+			dao.update(cliente);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+	}
 
-	public static void main(String[] args) {
+
+	public static void main(String[] args) {			
+		
 		launch(args);
 	}
 

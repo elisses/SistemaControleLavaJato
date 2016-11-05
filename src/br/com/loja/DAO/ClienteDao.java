@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import com.mysql.jdbc.Statement;
+
 import br.com.loja.jdbc.ConnectionFactory;
 import br.com.loja.modelo.Cliente;
 
@@ -16,17 +18,19 @@ public class ClienteDao implements MysqlDAO<Cliente> {
 
 	private Connection connection;
 
-	public ClienteDao() {
-		this.connection = new ConnectionFactory().getConnection();
-	}
+	
 
 	@Override
-	public void insert(Cliente cliente) {
+	public Long insert(Cliente cliente) throws SQLException {
 		String sql = "insert into contato " + "(nome,telefone,endereco,data,cpf)" + " values (?,?,?,?,?)";
-
+		
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
 		try {
+			connection = new ConnectionFactory().getConnection();
 			// prepared statement para inserção
-			PreparedStatement stmt = connection.prepareStatement(sql);
+			stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
 			// seta os valores
 			stmt.setString(1, cliente.getNome());
@@ -36,21 +40,40 @@ public class ClienteDao implements MysqlDAO<Cliente> {
 			stmt.setString(5, cliente.getCpf());
 
 			// executa
-			stmt.execute();
-			stmt.close();
+			Long retorno = Long.valueOf(stmt.executeUpdate());
+			
+			if(retorno==0){
+				throw new SQLException("Erro ao incluir usuário!");
+			}
+			
+			rs = stmt.getGeneratedKeys();
+			Long codigo = 0L;
+			if(rs.next()){
+				codigo = rs.getLong(1);
+			}
+			return codigo;
+			
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
+		}finally{
+			stmt.close();
+			connection.close();
+			rs.close();
+			
 		}
 
 	}
 
 	@Override
-	public int update(Cliente cliente) {
-		String sql = "update clientes set nome=?, email=?, endereco=?, dataNascimento=? where id=?";
+	public int update(Cliente cliente) throws SQLException {
+		String sql = "update contato set nome=?, telefone=?, endereco=?, data=?, cpf=? where id=?";
 
+		PreparedStatement stmt = null;
+		
 		try {
+			connection = new ConnectionFactory().getConnection();
 			// prepared statement para inserção
-			PreparedStatement stmt = connection.prepareStatement(sql);
+			stmt = connection.prepareStatement(sql);
 
 			// setando valores
 			stmt.setString(1, cliente.getNome());
@@ -60,19 +83,21 @@ public class ClienteDao implements MysqlDAO<Cliente> {
 			stmt.setString(5, cliente.getCpf());
 			stmt.setLong(6, cliente.getId());
 			stmt.execute();
-			stmt.close();
 			return 1;
 		} catch (SQLException e) {
 			System.out.println("Erro ao alterar");
 			throw new RuntimeException(e);
+		}finally{
+			stmt.close();
+			connection.close();
 		}
 	}
 
 	@Override
-	public int select(Cliente cliente) {
+	public int select(Cliente cliente) throws SQLException {
 
 		try {
-			PreparedStatement stmt = connection.prepareStatement("SELECT * from clientes where id=?");
+			PreparedStatement stmt = connection.prepareStatement("SELECT * from cliente where id=?");
 			stmt.setLong(1, cliente.getId());
 			stmt.execute();
 			stmt.close();
@@ -84,9 +109,9 @@ public class ClienteDao implements MysqlDAO<Cliente> {
 	}
 
 	@Override
-	public int delete(Cliente cliente) {
+	public int delete(Cliente cliente) throws SQLException {
 		try {
-			PreparedStatement stmt = connection.prepareStatement("delete from clientes where id=?");
+			PreparedStatement stmt = connection.prepareStatement("delete from contato where id=?");
 			stmt.setLong(1, cliente.getId());
 			stmt.execute();
 			stmt.close();
@@ -98,7 +123,7 @@ public class ClienteDao implements MysqlDAO<Cliente> {
 	}
 
 	@Override
-	public List<Cliente> getLista() {
+	public List<Cliente> getLista() throws SQLException{
 		try {
 			List<Cliente> clientes = new ArrayList<Cliente>();
 			PreparedStatement stmt = this.connection.prepareStatement("select * from clientes");

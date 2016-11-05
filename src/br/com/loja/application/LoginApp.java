@@ -148,7 +148,7 @@ public class LoginApp extends Application {
 	private void initComponents(){
 		
 		pane = new AnchorPane();
-		pane.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, green 0%, silver 100%);");
+		//pane.setStyle("-fx-background-color: linear-gradient(from 0% 0% to 100% 100%, green 0%, silver 100%);");
 		pane.setPrefSize(400, 300);
 		login = new Label("Login:");
 		txLogin = new TextField();
@@ -197,17 +197,20 @@ public class LoginApp extends Application {
 		System.exit(0);
 	}
 	
-	private void logar(){
-		if(txLogin.getText().equals("admin") && txSenha.getText().equals("casadocodigo")){
-			//todo Abrir  a tela vitrineApp
-			try{
-				new MenuApp().start(new Stage());
-				LoginApp.getStage().close();
-			}catch (Exception e){
-				e.printStackTrace();
+	private void logar() {
+		try{
+			if(txLogin.getText().equals("admin") && txSenha.getText().equals("elis")){
+				//todo Abrir  a tela vitrineApp
+				
+					new MenuApp().start(new Stage());
+					LoginApp.getStage().close();
+				
+			}else{
+				JOptionPane.showMessageDialog(null, "Login e/ou senha inválidos", "Erro", JOptionPane.ERROR_MESSAGE);
+				
 			}
-		}else{
-			JOptionPane.showMessageDialog(null, "Login e/ou senha inválidos", "Erro", JOptionPane.ERROR_MESSAGE);
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 	

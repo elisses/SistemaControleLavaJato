@@ -1,13 +1,14 @@
 package br.com.loja.DAO;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface MysqlDAO<T> {
 	
-	public void insert(T object);
-	public int update(T object);
-	public int select(T object);
-	public int delete(T object);
-	public List<T> getLista();
+	public Long insert(T object) throws SQLException;
+	public int update(T object) throws SQLException;
+	public int select(T object) throws SQLException;
+	public int delete(T object) throws SQLException;
+	public List<T> getLista() throws SQLException;
 	
 	 
 }
