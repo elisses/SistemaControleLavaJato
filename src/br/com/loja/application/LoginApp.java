@@ -166,7 +166,7 @@ public class LoginApp extends Application {
 		login.setLayoutY(30);
 		txLogin.setLayoutX((pane.getWidth() - txLogin.getWidth()) / 2);
 		txLogin.setLayoutY(50);
-		senha.setLayoutX((pane.getWidth() - txLogin.getWidth()) / 2);
+		senha.setLayoutX((pane.getWidth() - txSenha.getWidth()) / 2);
 		senha.setLayoutY(80);
 		txSenha.setLayoutX((pane.getWidth() - txSenha.getWidth()) / 2);
 		txSenha.setLayoutY(100);

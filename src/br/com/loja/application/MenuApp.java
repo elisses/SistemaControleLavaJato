@@ -17,7 +17,7 @@ public class MenuApp extends Application{
 	private ImageView imgServico;
 	private ImageView imgRelatorio;
 	private Button btUsuario;
-	private Button btCarro;
+	private Button btVeiculo;
 	private Button btServico;
 	private Button btRelatorio;	
 
@@ -48,7 +48,7 @@ public class MenuApp extends Application{
 		imgCarro.fitHeightProperty().set(200);
 		imgCarro.fitWidthProperty().set(200);
 		
-		btCarro = new Button("",imgCarro);			
+		btVeiculo = new Button("",imgCarro);			
 
 		imgServico = new ImageView(new Image("http://www.engenharsc.com.br/wp-content/uploads/2015/01/icone-infraestrutura-01.png"));
 		imgServico.fitHeightProperty().set(200);
@@ -62,14 +62,14 @@ public class MenuApp extends Application{
 		
 		btRelatorio = new Button("",imgRelatorio);	
 						
-        pane.getChildren().addAll(btUsuario,btCarro,btServico,btRelatorio);		
+        pane.getChildren().addAll(btUsuario,btVeiculo,btServico,btRelatorio);		
 	}
 	
 	private void initLayout(){	
 		btUsuario.setLayoutX(10);
 		btUsuario.setLayoutY(20);
-		btCarro.setLayoutX(285);
-		btCarro.setLayoutY(20);
+		btVeiculo.setLayoutX(285);
+		btVeiculo.setLayoutY(20);
 		btServico.setLayoutX(10);
 		btServico.setLayoutY(285);
 		btRelatorio.setLayoutX(285);
@@ -81,14 +81,29 @@ public class MenuApp extends Application{
 		btUsuario.setOnAction(new EventHandler<ActionEvent>(){
 			@Override
 			public void handle(ActionEvent event) {
-				logar();				
+				logaUsuario();				
 			}			
-		});		
+		});	
+		
+		btVeiculo.setOnAction(new EventHandler<ActionEvent>(){
+			@Override
+			public void handle(ActionEvent event) {
+				logaVeiculo();				
+			}			
+		});	
 	}
 	
-	public void logar(){
+	public void logaUsuario(){
 		try{
 			new ClienteApp().start(new Stage());
+			LoginApp.getStage().close();
+		}catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	public void logaVeiculo(){
+		try{
+			new VeiculoApp().start(new Stage());
 			LoginApp.getStage().close();
 		}catch (Exception e){
 			e.printStackTrace();

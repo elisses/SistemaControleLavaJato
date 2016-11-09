@@ -86,25 +86,14 @@ public class ClienteApp extends Application {
 		
 		dataNascimento  = new Label("Data Nascimento:");
 		txDataNascimento= new TextField();
-		txDataNascimento.setPromptText("dd/MM/yyyy");
-		
-		boxModCarro = new Label("Modelo de Carro:");		
-	    boxCarro = new ComboBox<String>();
-	    boxCarro.setEditable(true);
-		boxCarro.setPrefHeight(30);
-		boxCarro.setPrefWidth(150);
-		 ObservableList<String> options = 
-	                FXCollections.observableArrayList("Codigo","Nome","Cidade");
-		 
-		boxCarro.setItems(options);
-		
+		txDataNascimento.setPromptText("dd/MM/yyyy");		
 		btSalvar = new Button("Salvar");
 		btCancelar = new Button("Cancelar");
 		btAtualiza = new Button("Atualizar");
 		
 		
 		pane.getChildren().addAll(nome,txNome,telefone,txTelefone,cpf,txCpf,endereco,
-				txEndereco,dataNascimento,txDataNascimento,btSalvar,btAtualiza,btCancelar,boxCarro,boxModCarro,id,txId);	
+				txEndereco,dataNascimento,txDataNascimento,btSalvar,btAtualiza,btCancelar,id,txId);	
 	}
 	
 	public  void initLayout(){	

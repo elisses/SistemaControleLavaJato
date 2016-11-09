@@ -6,12 +6,12 @@ import java.util.List;
 
 import br.com.loja.modelo.Cliente;
 
-public class CarroDAO implements MysqlDAO<Cliente> {
+public class VeiculoDAO implements MysqlDAO<Cliente> {
 	private Connection connection;
 
 	@Override
-	public Long insert(Cliente object) throws SQLException {
-		String sql = "insert into contato "+"(nome,ano,fabricante,categoria,tamanhoDoTanque)" + "values(?????)";
+	public Long insert(Cliente cliente) throws SQLException {
+		String sql = "insert into veiculo "+"(id,tipo,modelo,placa)" + "values(?????)";
 		return null;
 	}
 
